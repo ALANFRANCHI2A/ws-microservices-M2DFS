@@ -17,10 +17,11 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Dictionary;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+@RestController
 public class ProductController {
 
     @Autowired
@@ -44,7 +45,7 @@ public class ProductController {
     }
 
     //Ajouter un produit
-    @PostMapping(value = "/Produits")
+    @PostMapping(value = "/Produit")
     public ResponseEntity<Void> ajouterProduit(@Valid @RequestBody Product product) {
 
         Product productAdded =  productDao.save(product);
@@ -62,22 +63,20 @@ public class ProductController {
     }
 
     //Supprimer un produit
-    @DeleteMapping(value = "/Produits/{productid}")
+    @DeleteMapping(value = "/Produit/{productid}")
     public void supprimerProduit(@PathVariable int productid) {
         productDao.delete(productid);
     }
 
     //Mettre à jour un produit
-    @PutMapping(value = "/Produits")
+    @PutMapping(value = "/Produit")
     public void updateProduit(@RequestBody Product product) {
-        productDao.findById(product.getId()).setNom(product.getNom());
-        productDao.findById(product.getId()).setPrix(product.getPrix());
-        productDao.findById(product.getId()).setPrixAchat(product.getPrixAchat());
+        productDao.save(product);
     }
 
     //Pour les tests
     @GetMapping(value = "test/produits/{prix}")
-    public List<Product>  testeDeRequetes(@PathVariable int prix) {
+    public List<Product> testeDeRequetes(@PathVariable int prix) {
         return productDao.chercherUnProduitCher(400);
     }
 
