@@ -2,6 +2,7 @@ package com.ecommerce.microcommerce.web.controller;
 
 import com.ecommerce.microcommerce.dao.ProductDao;
 import com.ecommerce.microcommerce.model.Product;
+import com.ecommerce.microcommerce.web.exceptions.ProduitGratuitException;
 import com.ecommerce.microcommerce.web.exceptions.ProduitIntrouvableException;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
@@ -46,7 +47,11 @@ public class ProductController {
 
     //Ajouter un produit
     @PostMapping(value = "/Produit")
-    public ResponseEntity<Void> ajouterProduit(@Valid @RequestBody Product product) {
+    public ResponseEntity<Void> ajouterProduit(@Valid @RequestBody Product product) throws ProduitGratuitException {
+
+        if(product.getPrix() <= 0) {
+            throw new ProduitGratuitException("Le prix de vente doit être supérieur à 0");
+        }
 
         Product productAdded =  productDao.save(product);
 
@@ -70,7 +75,10 @@ public class ProductController {
 
     //Mettre à jour un produit
     @PutMapping(value = "/Produit")
-    public void updateProduit(@RequestBody Product product) {
+    public void updateProduit(@RequestBody Product product) throws ProduitGratuitException {
+        if(product.getPrix() <= 0) {
+            throw new ProduitGratuitException("Le prix de vente doit être supérieur à 0");
+        }
         productDao.save(product);
     }
 
