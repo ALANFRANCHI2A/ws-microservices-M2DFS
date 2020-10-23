@@ -16,15 +16,15 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
-
+import java.util.stream.Collectors;
 
 
 public class ProductController {
 
     @Autowired
     private ProductDao productDao;
-
 
     //Récupérer la liste des produits
     @RequestMapping(value = "/Produits", method = RequestMethod.GET)
@@ -37,16 +37,13 @@ public class ProductController {
         return produitsFiltres;
     }
 
-
     //Récupérer un produit par son Id
-    public Product afficherUnProduit() {
-        return null;
+    @GetMapping(value = "/Produit/{productid}")
+    public Product afficherUnProduit(@PathVariable int productid) {
+        return productDao.findById(productid);
     }
 
-
-
-
-    //ajouter un produit
+    //Ajouter un produit
     @PostMapping(value = "/Produits")
     public ResponseEntity<Void> ajouterProduit(@Valid @RequestBody Product product) {
 
@@ -64,21 +61,24 @@ public class ProductController {
         return ResponseEntity.created(location).build();
     }
 
-    // supprimer un produit
-    public void supprimerProduit() {
+    //Supprimer un produit
+    @DeleteMapping(value = "/Produits/{productid}")
+    public void supprimerProduit(@PathVariable int productid) {
+        productDao.delete(productid);
     }
 
-    // Mettre à jour un produit
+    //Mettre à jour un produit
+    @PutMapping(value = "/Produits")
     public void updateProduit(@RequestBody Product product) {
+        productDao.findById(product.getId()).setNom(product.getNom());
+        productDao.findById(product.getId()).setPrix(product.getPrix());
+        productDao.findById(product.getId()).setPrixAchat(product.getPrixAchat());
     }
-
 
     //Pour les tests
     @GetMapping(value = "test/produits/{prix}")
     public List<Product>  testeDeRequetes(@PathVariable int prix) {
         return productDao.chercherUnProduitCher(400);
     }
-
-
 
 }
